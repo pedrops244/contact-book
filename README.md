@@ -4,4 +4,4 @@ Este projeto foi feito com o intuito de dar meu primeiro passo como dev fullstac
 <p>A aplicação consiste em uma agenda de contato, onde o usuário pode adicionar, editar e excluir seus contatos. </p>
 <p>Foi feito um sistema de cadastro e login para cada usuário.</p>
 
-<p>Link do site online: http://35.199.107.152/ </p>
+<p>Link da aplicação: http://35.199.107.152/ </p>
