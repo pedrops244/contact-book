@@ -5,6 +5,12 @@ exports.index = (req, res) => {
   return res.render('login');
 };
 
+/**
+ *  Cria a instância 'register' e envia o body.
+ *  Chama o método de validação dos dados.
+ *  Em caso de erro: Salva em flash message os erros, volta para página de cadastro e exibe os erros, salvando a sessão.
+ *  Caso a validação retorne true, cria o contato e exibe pro cliente o sucesso do registro.
+ */
 exports.register = async (req, res) => {
   try {
     const contato = new Contato(req.body, req.session.user.email);
@@ -23,9 +29,7 @@ exports.register = async (req, res) => {
     }
     req.flash('success', 'Contato registrado com sucesso.');
     idUser = contato.contato._id;
-    req.session.save(() =>
-      res.redirect(`/contato/index/${contato.contato._id}`)
-    );
+    req.session.save(() => res.redirect('/'));
     return idUser;
   } catch (e) {
     console.log(e);
@@ -33,6 +37,12 @@ exports.register = async (req, res) => {
   }
 };
 
+/**
+ *  Cria a instância 'editIndex' se o usuário estiver logado.
+ *  Localiza os dados do contato pelo id do usuário.
+ *  Em caso de erro: É exibido uma página 404 de erro.
+ *  Caso a validação retorne true, o usuário é redirecionado para página de edição.
+ */
 exports.editIndex = async (req, res) => {
   try {
     if (req.session.user) {
@@ -58,6 +68,13 @@ exports.editIndex = async (req, res) => {
   }
 };
 
+/**
+ *  Cria a instância 'edit' com o body coletado no post.
+ *  Chama o método de 'edit' do model que atualizará os dados no BD.
+ *  Localiza os dados do contato pelo id do usuário.
+ *  Em caso de erro: Salva em flash message os erros, volta para página do contato em edição sem modificar os dados já salvos e exibe os erros, salvando a sessão.
+ *  Caso seja localizado, o usuário edita o contato, o sucesso da edição é exibido e é redirecionado para a página de contato.
+ */
 exports.edit = async function (req, res) {
   try {
     if (req.session.user) {
@@ -100,6 +117,12 @@ exports.edit = async function (req, res) {
   }
 };
 
+/**
+ *  Cria a instância 'delete' se o usuário estiver logado.
+ *  Localiza os dados do contato pelo id do usuário.
+ *  Em caso de erro: É exibido uma página 404 de erro.
+ *  Caso seja localizado, o usuário deleta o contato selecionado.
+ */
 exports.delete = async function (req, res) {
   try {
     if (req.session.user) {

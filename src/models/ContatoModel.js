@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 
+// Criação do Schema (Dados e regras para os dados)
 const ContatoSchema = new mongoose.Schema(
   {
     nome: { type: String, required: true },
@@ -13,8 +14,10 @@ const ContatoSchema = new mongoose.Schema(
   { collection: 'contatos' }
 );
 
+// Criação do model.
 const ContatoModel = mongoose.model('Contato', ContatoSchema);
 
+// Função construtora que tratará os dados.
 function Contato(body, idUser) {
   this.body = body;
   this.user = idUser;
@@ -22,12 +25,20 @@ function Contato(body, idUser) {
   this.contato = null;
 }
 
+/**
+ * Método que cadastra e valida o contato em async por se tratar de gravação em Bando de Dados.
+ * Em caso de erro (errors.length > 0): Não permite a gravação no BD.
+ * Caso não tenha erros, retorna para a chave this.contato: a criação do contato em await.
+ */
 Contato.prototype.register = async function () {
   this.valida();
   if (this.errors.length > 0) return;
   this.contato = await ContatoModel.create(this.body);
 };
 
+/**
+ * Método que verifica se os campos enviados estão respeitando suas respectivas regras.
+ */
 Contato.prototype.valida = function () {
   this.cleanUp();
 
@@ -41,6 +52,10 @@ Contato.prototype.valida = function () {
     this.errors.push('E-mail inválido');
 };
 
+/**
+ * Método que percorre cada chave e valida se os valores enviados são strings.
+ * Garante que seja enviado somente os campos necessários para validação do model e exclui os outros dados como csrf token.
+ */
 Contato.prototype.cleanUp = function () {
   for (let key in this.body) {
     if (typeof this.body[key] !== 'string') {
@@ -56,6 +71,13 @@ Contato.prototype.cleanUp = function () {
   };
 };
 
+/**
+ * Método de edição do contato
+ * Se o ID for diferente de uma string não é realizado a busca e/ou edição.
+ * Em caso de erro (errors.length > 0): Não permite gravação em BD.
+ * Realiza as validações através do método valida().
+ * Caso o ID seja localizado no BD, ele é editado na chave 'contato' através do método findByIdAndUpdate.
+ */
 Contato.prototype.edit = async function (id) {
   if (typeof id !== 'string') return;
   this.valida();
@@ -66,12 +88,21 @@ Contato.prototype.edit = async function (id) {
 };
 
 // Métodos estáticos
+
+/**
+ * Método que recebe e localiza o contato pelo paramêtro id do contatoController.
+ * Se o ID for diferente de uma string não é realizado a busca.
+ * Caso o ID seja localizado no BD, ele é salvo na chave 'id' através do método findById.
+ */
 Contato.buscaPorId = async function (id) {
   if (typeof id !== 'string') return;
   const contato = await ContatoModel.findById(id);
   return contato;
 };
 
+/**
+ * Método que localiza e lista os contatos ordenados por data de criação.
+ */
 Contato.buscaContatos = async function (userEmail) {
   const contatos = await ContatoModel.find({ idUser: userEmail }).sort({
     criadoEm: -1,
@@ -79,6 +110,10 @@ Contato.buscaContatos = async function (userEmail) {
   return contatos;
 };
 
+/**
+ * Se o ID for diferente de uma string não é realizado a busca e/ou exclusão.
+ * Caso o ID seja localizado no BD, ele é deletado através do método findOneAndDelete.
+ */
 Contato.delete = async function (id) {
   if (typeof id !== 'string') return;
   const contato = await ContatoModel.findOneAndDelete({ _id: id });

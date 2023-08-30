@@ -5,6 +5,12 @@ exports.index = (req, res) => {
   return res.render('login');
 };
 
+/**
+ *  Cria a instância 'register' e envia o body.
+ *  Chama o método de validação dos dados.
+ *  Em caso de erro: Salva em flash message os erros, volta para página de cadastro e exibe os erros, salvando a sessão.
+ *  Caso a validação retorne true, cria o usuário e exibe pro cliente o sucesso do registro.
+ */
 exports.register = async function (req, res) {
   try {
     const login = new Login(req.body);
@@ -27,6 +33,13 @@ exports.register = async function (req, res) {
     return res.render('404');
   }
 };
+
+/**
+ *  Cria a instância 'login' e envia o body.
+ *  Chama o método de validação dos dados.
+ *  Em caso de erro: Salva em flash message os erros, volta para página de login e exibe os erros, salvando a sessão.
+ *  Caso a validação retorne true, o usuário loga no sistema e é redirecionado para proxima página.
+ */
 exports.login = async function (req, res) {
   try {
     const login = new Login(req.body);
@@ -43,7 +56,7 @@ exports.login = async function (req, res) {
     req.flash('success', 'Você entrou no sistema.');
     req.session.user = login.user;
     req.session.save(function () {
-      return res.redirect('/login/index');
+      return res.redirect('/');
     });
   } catch (e) {
     console.log(e);
@@ -51,6 +64,10 @@ exports.login = async function (req, res) {
   }
 };
 
+/**
+ *  Cria a instância 'logout'
+ *  Quando usuário desloga, a sessão é destruida e o usuário é redirecionado para pagina de login novamente.
+ */
 exports.logout = function (req, res) {
   req.session.destroy();
   res.redirect('/');

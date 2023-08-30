@@ -1,5 +1,5 @@
 const express = require('express');
-const route = express.Router();
+const routes = express.Router();
 const homeController = require('./src/controllers/homeController');
 const loginController = require('./src/controllers/loginController');
 const contatoController = require('./src/controllers/contatoController');
@@ -7,19 +7,19 @@ const contatoController = require('./src/controllers/contatoController');
 const { loginRequired } = require('./src/middlewares/middleware');
 
 // Rotas da home
-route.get('/', homeController.index);
+routes.get('/', homeController.index);
 
 // Rotas de login
-route.get('/login/index', loginController.index);
-route.post('/login/register', loginController.register);
-route.post('/login/login', loginController.login);
-route.get('/login/logout', loginController.logout);
+routes.get('/login/index', loginController.index);
+routes.post('/login/register', loginController.register);
+routes.post('/login/login', loginController.login);
+routes.get('/login/logout', loginController.logout);
 
 // Rotas de contato
-route.get('/contato/index', loginRequired, contatoController.index);
-route.post('/contato/register', loginRequired, contatoController.register);
-route.post('/contato/edit/:id', loginRequired, contatoController.edit);
-route.get('/contato/index/:id', loginRequired, contatoController.editIndex);
-route.get('/contato/delete/:id', loginRequired, contatoController.delete);
+routes.get('/contato/index', loginRequired, contatoController.index);
+routes.post('/contato/register', loginRequired, contatoController.register);
+routes.post('/contato/edit/:id', loginRequired, contatoController.edit);
+routes.get('/contato/index/:id', loginRequired, contatoController.editIndex);
+routes.get('/contato/delete/:id', loginRequired, contatoController.delete);
 
-module.exports = route;
+module.exports = routes;
